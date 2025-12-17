@@ -32,79 +32,66 @@ A content-based recommendation engine is a type of recommendation system that us
 * Content-based filtering systems are generally easier to create.
 
 ### Challenges of content-based approach
-* There’s a lack of novelty and diversity.
-* Scalability is a challenge.
-* Attributes may be incorrect or inconsistent. 
+# Diet Recommendation Chatbot
 
-## :computer:Development
-### Model developement
-The recommendation engine is built using Nearest Neighbors alogrithm which is an unsupervised learner for implementing neighbor searches. It acts as a uniform interface to three different nearest neighbors algorithms: BallTree, KDTree, and a brute-force algorithm based on routines in sklearn.metrics.pairwise. For our case, we used the brute-force algorithm using cosine similarity due to its fast computation for small datasets.
+This repository contains a diet recommendation system with a Streamlit frontend and a FastAPI backend. The recommendation engine uses a content-based approach with scikit-learn to suggest meals based on user information and nutritional features.
 
-$$cos(theta) = (A * B) / (||A|| * ||B||)$$
+Repository layout
 
-### Dataset
-I used Food.com kaggle dataset Data with over 500,000 recipes and 1,400,000 reviews from Food.com. Visit this [kaggle](https://www.kaggle.com/datasets/irkaal/foodcom-recipes-and-reviews?select=recipes.csv) link for more details.
-### Backend Developement
-The application is built using the FastAPI framework, which allows for the creation of fast and efficient web APIs. When a user makes a request to the API (user data,nutrition data...) the model is used to generate a list of recommended food similar/suitable to his request (data) which are then returned to the user via the API.
-
-### Frontend Developement
-
-The application's front-end is made with Streamlit. Streamlit is an open source app framework in Python language. It helps to create web apps for data science and machine learning in a short time. It is compatible with major Python libraries such as scikit-learn, Keras, PyTorch, SymPy(latex), NumPy, pandas, Matplotlib etc. For our case the front-end is composed of three web pages. The main page is Hello.py which is a welcoming page used to introduce you to my project. The side bar on the left allows the user to navigate too the automatic diet recommendation page and the custom food recommendation page. In the diet recommendation page the user can fill information about his age,weight,height.. and gets a diet recommendation based on his information. Besides, the custom food recommendation allows the user to specify more his food preferency using nutritional values.
-
-### Deployement using Docker
-#### Why Docker?
-By using Docker, you can ensure that the environment in which the application is exactly the same as the environment in which it was built, which can help prevent unexpected issues and improve model performance. Additionally, Docker allows for easy scaling and management of the deployment, making it a great choice for larger machine learning projects.
-#### Docker-Compose
-My project is composed of different services (frontend,API). Therefore, our application should run on multiple containers. With the help of Docker-compose we can share our application using the yaml file that define the services that runs together.
-
-### Project Architecture
-
-<div align= "center"><img src="Assets/Architecture_diagram.png" width="600" height="400"/></div>
-
-
-## :rocket: Technologies
-The project is created with:
-* Python: 3.10.8
-* fastapi 0.88.0
-* uvicorn 0.20.0
-* scikit-learn 1.1.3
-* Pandas: 1.5.1
-* Streamlit: 1.16.0
-* streamlit-echarts 1.24.1
-* Numpy: 1.21.5
-* beautifulsoup4 4.11.1
-
-![](https://img.icons8.com/color/48/null/python--v1.png)![](https://img.icons8.com/color/48/null/numpy.png)![](Assets/streamlit-icon-48x48.png)![](Assets/fastapi.ico)![](Assets/scikit-learn.ico) ![](https://img.icons8.com/color/48/null/pandas.png)
-
-## :whale: Setup
-
-### Run it locally
-#### Clone the repo
 ```
-$ git clone https://github.com/zakaria-narjis/Diet-Recommendation-System
+./
+├─ FastAPI_Backend/         # FastAPI app and model code
+├─ Streamlit_Frontend/      # Streamlit UI and pages
+├─ Data/                    # Raw/enhanced datasets (large files)
+├─ Assets/                  # Images and icons used by the UI
+├─ docker-compose.yml
+├─ README.md                # <- this file
+└─ project_report.md
 ```
-### docker-compose
-In the project root run:
-```
-$ docker-compose up -d --build
-```
-Then open http://localhost:8501 and enjoy :smiley:.
 
-PS: You should have docker and docker-compose already installed
-### Use the hosted version on Streamlit Cloud
+Quick start
 
-https://diet-recommendation-system.streamlit.app/
+1) Run locally (recommended for development)
 
-## Citation
-```
-@software{narjis_2024_12507829,
-  author       = {Narjis, Zakaria},
-  title        = {Diet recommendation system},
-  month        = jun,
-  year         = 2024,
-  publisher    = {Zenodo},
-  version      = {v1.0.1},
-  doi          = {10.5281/zenodo.12507829},
-  url          = {https://doi.org/10.5281/zenodo.12507829}
-}
-```
+ - Start the backend API:
+
+   - Install dependencies (preferably in a virtualenv):
+
+     pip install -r FastAPI_Backend/requirements.txt
+
+   - Start FastAPI (from repository root):
+
+     uvicorn FastAPI_Backend.main:app --reload --port 8000
+
+ - Start the Streamlit frontend:
+
+     pip install -r Streamlit_Frontend/requirements.txt
+     streamlit run Streamlit_Frontend/Hello.py
+
+ The Streamlit UI defaults to port 8501. The frontend talks to the backend API on the configured URL (see `Streamlit_Frontend/Generate_Recommendations.py` or app pages for the exact endpoint).
+
+2) Run with Docker Compose (builds and runs both services)
+
+   docker-compose up -d --build
+
+ Then open http://localhost:8501 for the Streamlit UI.
+
+Notes and recommendations
+
+- Large data files: `Data/dataset.csv` and `Data/dataset_enhanced.csv` are ~90 MB each and have already been pushed to GitHub. GitHub warned about their size when pushing. For long-term maintenance you should consider one of the following:
+  - Use Git LFS for these files (recommended) and re-add them under LFS tracking.
+  - Move datasets to a separate releases storage (GitHub Releases, S3) and keep only a small sample in the repo.
+
+- Repo structure: The frontend is under `Streamlit_Frontend/` with pages in `Streamlit_Frontend/pages/`. The backend FastAPI app is in `FastAPI_Backend/`.
+
+Contributing
+
+If you want to contribute, please fork the repo and open a pull request. Helpful contributions include:
+
+- Adding tests and CI for the backend endpoints
+- Moving large data to Git LFS or external storage
+- Adding a small sample dataset in `Data/sample/` for CI and quick testing
+
+Contact
+
+If you want me to make any of the follow-ups for you (convert the large files to Git LFS, add CI, or update the README with badges and usage examples) I can do that next — tell me which you'd like.
